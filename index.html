@@ -35,7 +35,6 @@ header .sub{margin:10px 0 0;color:var(--sub);font-size:13px;letter-spacing:.04em
 .stage{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:relative}
 /* 下部サイバーパターン(最下部約15%) */
 .cyberfloor{position:fixed;left:0;right:0;bottom:0;height:15vh;height:15dvh;pointer-events:none;z-index:1}
-body.theater .cyberfloor,body.clean .cyberfloor{z-index:70}
 .cyberfloor::before{content:"";position:absolute;inset:0;
   background:
     repeating-linear-gradient(90deg,rgba(42,212,255,.14) 0 1px,transparent 1px 30px),
@@ -1205,7 +1204,7 @@ showTab('images');
 if(window.matchMedia('(max-width:900px)').matches) setSheet(true);  // 初見はカードを主役に
 
 /* ---------- バージョン表示(更新確認用・変更のたびに番号を上げる) ---------- */
-const APP_VER='v24';
+const APP_VER='v25';
 document.getElementById('verLine').textContent='バージョン '+APP_VER;
 (function(){const f=document.querySelector('footer'); if(f) f.firstChild.textContent='キラキラカードメーカー '+APP_VER+' — ';})();
 
@@ -1474,5 +1473,5 @@ fitCard(); applyDesign(); applyOverlay(); updateHoloKindState(); updateSaveStatu
 requestAnimationFrame(frame);
 if(restored) toast('前回の画像と設定を復元しました');
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5745d15cd451a25',t:'MTc5NDEzODY2Mw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5745d15cd451a25',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
