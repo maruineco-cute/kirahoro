@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>レンチキュラーメーカー — 角度で絵が変わるカード</title>
+<title>キラキラカードメーカー — 角度で絵が変わるカード</title>
 <style>
 :root{
   --bg1:#04060b; --bg2:#090e1a;
@@ -25,21 +25,9 @@ body{
     radial-gradient(900px 660px at -8% 108%, #2a0e33 0%, transparent 55%),
     linear-gradient(168deg,#04060c 0%, #080d18 60%, #05070f 100%);
 }
-header{padding:30px 20px 10px;text-align:center;position:relative;z-index:3}
-.eyebrow{margin:0;font-size:10px;letter-spacing:.42em;color:#79c6e8;text-transform:uppercase;font-weight:600}
-header h1{
-  margin:6px 0 0;font-size:clamp(21px,3.6vw,32px);letter-spacing:.05em;font-weight:800;
-  color:#8fdcff;   /* グラデーション非対応環境でも確実に見えるフォールバック色 */
-}
-@supports ((-webkit-background-clip:text) or (background-clip:text)){
-  header h1{
-    background:linear-gradient(92deg,#5ee6ff,#7fb2ff,#c98bff,#ff6fd8,#5ee6ff);
-    background-size:200% 100%;
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:iris 9s linear infinite;
-  }
-}
-@keyframes iris{to{background-position:200% 0}}
+header{padding:14px 20px 8px;text-align:center;position:relative;z-index:3}
+.eyebrow{margin:0 0 6px;font-size:10px;letter-spacing:.42em;color:#79c6e8;text-transform:uppercase;font-weight:600}
+header .help{max-width:640px;margin:0 auto}
 header .sub{margin:10px 0 0;color:var(--sub);font-size:13px;letter-spacing:.04em}
 .layout{display:flex;gap:22px;max-width:1180px;margin:0 auto;padding:18px 20px 34px;align-items:stretch;position:relative;z-index:2}
 
@@ -63,10 +51,10 @@ body.theater .cyberfloor,body.clean .cyberfloor{z-index:70}
 }
 @keyframes cyberPulse{0%,100%{opacity:.65}50%{opacity:1}}
 .angle-chip{
-  position:absolute;top:4px;right:8px;z-index:5;
+  flex:0 0 auto;align-self:center;min-width:46px;text-align:center;
   font-variant-numeric:tabular-nums;font-size:11px;color:var(--sub);
   background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:999px;padding:2px 10px;
-  backdrop-filter:blur(6px);white-space:nowrap;
+  backdrop-filter:blur(6px);white-space:nowrap;user-select:none;
 }
 .scene{perspective:1500px;width:100%;display:flex;justify-content:center;position:relative}
 .glow{
@@ -202,6 +190,7 @@ details.help summary::-webkit-details-marker{display:none}
 details.help summary::before{content:"▸";color:var(--accent2);transition:transform .2s;font-size:11px}
 details.help[open] summary::before{transform:rotate(90deg)}
 .help-body{padding:2px 14px 12px;font-size:12px;line-height:1.8;color:var(--sub)}
+.verline{margin:10px 0 0;font-size:10px;letter-spacing:.06em;color:var(--sub);opacity:.65;text-align:right}
 .help-body b{color:var(--text)}
 .help-body ul{margin:6px 0;padding-left:16px}
 .help-body li{margin:4px 0}
@@ -256,7 +245,6 @@ body.theater .stage,body.clean .stage{position:fixed;inset:0;z-index:60;backgrou
 body.clean .stage{background:#04060c;backdrop-filter:none}
 body.theater .hint,body.clean .hint{display:none}
 body.clean .stage-tools,body.clean .angle-chip{display:none}
-body.theater .angle-chip{top:18px;right:18px}
 #closeTheater{display:none;transition:opacity .6s}
 #closeTheater.faded{opacity:.45}
 body.theater #closeTheater,body.clean #closeTheater{
@@ -282,20 +270,23 @@ body.theater #gyroFloat:hover,body.clean #gyroFloat:hover{background:rgba(255,25
   html,body{height:100%;overflow:hidden}
   html,body{height:100dvh}   /* URLバーありの実寸(100%が最大高さに解決されるAndroid/iOS対策) */
   body{display:flex;flex-direction:column}
-  header{flex:0 0 auto;padding:14px 10px 8px}
+  header{flex:0 0 auto;padding:8px 10px 4px}
+  .help-body{max-height:34dvh;overflow-y:auto}   /* 使い方を開いても画面を潰さない */
   header .sub{display:none}
   .layout{flex-direction:column;flex:1;min-height:0;width:100%;max-width:none;margin:0;padding:6px 10px 0}
   .stage{
-    flex:1;min-height:0;width:100%;padding-top:24px;
+    flex:1;min-height:0;width:100%;padding-top:8px;
     padding-bottom:calc(48dvh + 12px + env(safe-area-inset-bottom,0px));
     padding-bottom:calc(min(48dvh, 100dvh - 320px) + 12px + env(safe-area-inset-bottom,0px));
   }
   body.sheet-collapsed .stage{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
   body.theater .stage,body.clean .stage{padding:0}
+  body.theater .stage{padding-top:10px}
   .stage-tools{margin-top:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;width:100%}
   .stage-tools .btn{font-size:11px;min-height:34px;padding:5px 10px;white-space:nowrap}
   .stage-tools.compact{gap:4px;margin-top:8px}
   .stage-tools.compact .btn{font-size:10px;min-height:30px;padding:3px 8px}
+  .stage-tools.compact .angle-chip{font-size:10px;padding:2px 8px}
   .hint{display:none}
   footer{display:none}
   .panel{
@@ -331,17 +322,39 @@ footer{padding:0 20px 30px;text-align:center;color:var(--sub);font-size:11px;pos
 <div class="cyberfloor" aria-hidden="true"></div>
 
 <header>
-  <p class="eyebrow">Lenticular Maker</p>
-  <h1>レンチキュラーメーカー</h1>
+  <p class="eyebrow">Kirakira Card Maker</p>
+  <details class="help">
+    <summary>📖 使い方(タップで開閉)</summary>
+    <div class="help-body">
+      <ul>
+        <li><b>追加</b>:「＋」タイル / カードへのドロップ / 画像の貼り付け。何枚でも登録できますが、多いほど1枚あたりが見える傾きの幅が狭くなります(見やすい目安は2〜8枚。枚数が多い時は「切り替えかた」をシャープ側に)</li>
+        <li><b>並び</b>:1枚目=左に傾けた時、最後=右に傾けた時。サムネイルのドラッグか「並べ替え」ボタンで変更</li>
+        <li><b>調整</b>:サムネイルを選択(または◀▶)して、その画像の拡大率・位置を調整。サイズの違う画像を揃えるのに使います</li>
+        <li><b>切り替えかた</b>:なめらか=フェード / シャープ=本物のレンティクラっぽく一瞬で切替</li>
+        <li><b>光沢</b>:ツヤ(白)/ ホロ(ハート♡・星☆・星雪✳・つぶつぶ・モザイク・扇形・虹ストライプ)。「画像の明るさで光る」オンで明るい部分ほどキラキラ、暗い部分は控えめ</li>
+        <li><b>デザイン</b>:角丸・枠=カードの縁 / 影=浮き出し / 背景の光の色=カードの後ろのヒカリ</li>
+        <li><b>枠画像</b>:デザインタブから透過PNG(フレーム素材)をカードに重ねられる</li>
+        <li><b>全画面</b>:「⛶ 全画面」でボタン等を消してカードだけ表示。✕と「📱 傾け」は数秒で薄くなり、画面をタッチすると再表示</li>
+        <li><b>スマホの傾き</b>:通常時は ⚙カード設定の「📱 スマホの傾きで動かす」、全画面中は ✕ の横の「📱 傾け」ボタンでON/OFF</li>
+        <li><b>保存</b>:画像と設定は自動保存(環境によっては無効)</li>
+      </ul>
+      <p class="verline" id="verLine"></p>
+    </div>
+  </details>
   <p class="sub">カードを傾けると絵が変わる — ドラッグでぐるり、ダブルクリックでスナップ</p>
 </header>
 
 <div class="layout">
 
   <section class="stage" id="stageWrap">
-    <div class="angle-chip" id="angleChip">0°</div>
     <button id="closeTheater" title="閉じる (Esc)">✕</button>
     <button id="gyroFloat" title="スマホの傾きでカードを動かす">📱 傾け</button>
+    <div class="stage-tools">
+      <button id="autoBtn" class="btn">▶ 自動</button>
+      <button id="snapBtn" class="btn">📸 スナップ</button>
+      <button id="cleanBtn" class="btn" title="ボタン等を消してカードだけを大きく表示">⛶ 全画面</button>
+      <div class="angle-chip" id="angleChip">0°</div>
+    </div>
     <div class="scene" id="scene">
       <div class="glow" id="glow"></div>
       <div class="card" id="card">
@@ -353,11 +366,6 @@ footer{padding:0 20px 30px;text-align:center;color:var(--sub);font-size:11px;pos
       </div>
     </div>
     <div class="hint" id="hint">← ドラッグで傾けてみて →</div>
-    <div class="stage-tools">
-      <button id="autoBtn" class="btn">▶ 自動</button>
-      <button id="snapBtn" class="btn">📸 スナップ</button>
-      <button id="cleanBtn" class="btn" title="ボタン等を消してカードだけを大きく表示">⛶ 全画面</button>
-    </div>
   </section>
 
   <aside class="panel" id="panel">
@@ -371,23 +379,7 @@ footer{padding:0 20px 30px;text-align:center;color:var(--sub);font-size:11px;pos
       </nav>
     </div>
 
-    <details class="help">
-      <summary>📖 使い方(タップで開閉)</summary>
-      <div class="help-body">
-        <ul>
-          <li><b>追加</b>:「＋」タイル / カードへのドロップ / 画像の貼り付け。何枚でも登録できますが、多いほど1枚あたりが見える傾きの幅が狭くなります(見やすい目安は2〜8枚。枚数が多い時は「切り替えかた」をシャープ側に)</li>
-          <li><b>並び</b>:1枚目=左に傾けた時、最後=右に傾けた時。サムネイルのドラッグか「並べ替え」ボタンで変更</li>
-          <li><b>調整</b>:サムネイルを選択(または◀▶)して、その画像の拡大率・位置を調整。サイズの違う画像を揃えるのに使います</li>
-          <li><b>切り替えかた</b>:なめらか=フェード / シャープ=本物のレンティクラっぽく一瞬で切替</li>
-          <li><b>光沢</b>:ツヤ(白)/ ホロ(ハート♡・星☆・星雪✳・つぶつぶ・モザイク・扇形・虹ストライプ)。「画像の明るさで光る」オンで明るい部分ほどキラキラ、暗い部分は控えめ</li>
-          <li><b>デザイン</b>:角丸・枠=カードの縁 / 影=浮き出し / 背景の光の色=カードの後ろのヒカリ</li>
-          <li><b>枠画像</b>:デザインタブから透過PNG(フレーム素材)をカードに重ねられる</li>
-          <li><b>全画面</b>:「⛶ 全画面」でボタン等を消してカードだけ表示。✕と「📱 傾け」は数秒で薄くなり、画面をタッチすると再表示</li>
-          <li><b>スマホの傾き</b>:通常時は ⚙カード設定の「📱 スマホの傾きで動かす」、全画面中は ✕ の横の「📱 傾け」ボタンでON/OFF</li>
-          <li><b>保存</b>:画像と設定は自動保存(環境によっては無効)</li>
-        </ul>
-      </div>
-    </details>
+
 
     <section data-sec="images">
       <h2>🖼 画 像 <span class="count" id="frameCount">2枚</span></h2>
@@ -767,8 +759,7 @@ function fitCard(){
       if(need>pb){ stageEl.style.paddingBottom=need+'px'; pb=need; }
       else if(stageEl.style.paddingBottom){ stageEl.style.paddingBottom=''; pb=parseFloat(getComputedStyle(stageEl).paddingBottom)||0; }
     }
-    let pt=parseFloat(cs.paddingTop)||0;
-    if(getComputedStyle(chip).display!=='none') pt=Math.max(pt, chip.offsetTop+chip.offsetHeight+2);   // 角度チップ分も確保
+    const pt=parseFloat(cs.paddingTop)||0;
     const base=stageEl.clientHeight-pb-pt-14;   // ツール行を除いて確保できる高さ
     let avail=base-tlsH;
     if(tls&&avail<150){                          // 狭い → コンパクト(小さいボタン2行)に切替
@@ -1205,12 +1196,18 @@ function setSheet(collapsed){
 }
 sheetToggle.addEventListener('click',()=>setSheet(!document.body.classList.contains('sheet-collapsed')));
 document.querySelector('.panel').addEventListener('transitionend',e=>{ if(e.propertyName==='max-height') requestAnimationFrame(fitCard); });   // 開閉アニメ完了後の実寸で再調整
+document.querySelector('details.help').addEventListener('toggle',()=>requestAnimationFrame(fitCard));   // 使い方の開閉でヘッダー高さが変わるため
 tabBtns.forEach(b=>b.addEventListener('click',()=>{
   showTab(b.dataset.tab);
   if(document.body.classList.contains('sheet-collapsed')) setSheet(false);
 }));
 showTab('images');
 if(window.matchMedia('(max-width:900px)').matches) setSheet(true);  // 初見はカードを主役に
+
+/* ---------- バージョン表示(更新確認用・変更のたびに番号を上げる) ---------- */
+const APP_VER='v24';
+document.getElementById('verLine').textContent='バージョン '+APP_VER;
+(function(){const f=document.querySelector('footer'); if(f) f.firstChild.textContent='キラキラカードメーカー '+APP_VER+' — ';})();
 
 /* ---------- デバッグ表示(URLの末尾に ?debug を付けると有効) ---------- */
 if(/[?&]debug/.test(location.search)){
@@ -1222,6 +1219,7 @@ if(/[?&]debug/.test(location.search)){
   const upd=()=>{
     const tls=document.querySelector('.stage-tools');
     box.textContent=[
+      'VER '+APP_VER,
       'UA '+navigator.userAgent.slice(0,70),
       'win '+innerWidth+'x'+innerHeight+' dpr'+devicePixelRatio+(window.visualViewport?' vv '+Math.round(visualViewport.width)+'x'+Math.round(visualViewport.height):''),
       'body['+(document.body.className||'-')+']',
@@ -1476,5 +1474,5 @@ fitCard(); applyDesign(); applyOverlay(); updateHoloKindState(); updateSaveStatu
 requestAnimationFrame(frame);
 if(restored) toast('前回の画像と設定を復元しました');
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a571cde76e2f96da',t:'MTc5NDExMTgyNw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a571cde76e2f96da',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
