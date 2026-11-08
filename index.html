@@ -258,7 +258,7 @@ body.theater .hint,body.clean .hint{display:none}
 body.clean .stage-tools,body.clean .angle-chip{display:none}
 body.theater .angle-chip{top:18px;right:18px}
 #closeTheater{display:none;transition:opacity .6s}
-#closeTheater.faded{opacity:.14}
+#closeTheater.faded{opacity:.45}
 body.theater #closeTheater,body.clean #closeTheater{
   display:grid;place-items:center;position:absolute;top:auto;bottom:14px;right:14px;z-index:70;
   width:46px;height:46px;border-radius:50%;font-size:19px;line-height:1;
@@ -267,7 +267,7 @@ body.theater #closeTheater,body.clean #closeTheater{
 }
 body.theater #closeTheater:hover,body.clean #closeTheater:hover{background:rgba(255,255,255,.2)}
 #gyroFloat{display:none;transition:opacity .6s}
-#gyroFloat.faded{opacity:.14}
+#gyroFloat.faded{opacity:.45}
 #gyroFloat.on{border-color:rgba(42,212,255,.65);box-shadow:0 0 14px rgba(42,212,255,.3);color:#bff1ff}
 body.theater #gyroFloat,body.clean #gyroFloat{
   display:flex;align-items:center;justify-content:center;
@@ -583,9 +583,9 @@ const clamp=(v,m)=>Math.max(-m,Math.min(m,v));
 
 /* ---------- toast ---------- */
 let toastTimer;
-function toast(msg){
+function toast(msg,ms=2400){
   const el=$('#toast'); el.textContent=msg; el.classList.add('show');
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2400);
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),ms);
 }
 
 /* ---------- frames ---------- */
@@ -750,12 +750,21 @@ function fitCard(){
   }
   let tlsH=tls?tls.offsetHeight+(parseFloat(getComputedStyle(tls).marginTop)||0):0;
   if(th){
+    stageEl.style.paddingBottom='';   // 通常モードで付けた実測予約を全画面系では解除(padding:0 を生かす)
     availH=Math.max(150,Math.min(window.innerHeight*0.8,window.innerHeight-124)-(theater?tlsH+16:0));
     availH=Math.max(80,Math.min(availH,window.innerHeight-124));   // 下端の✕/傾けボタン(14+46px)と重ねない
   }
   else if(mob){
     const cs=getComputedStyle(stageEl);
-    const pb=parseFloat(cs.paddingBottom)||0;
+    let pb=parseFloat(cs.paddingBottom)||0;
+    // 実測自己補正:端末のフォント寸法・ブラウザUIなどでシートが予約(CSS)より高い場合は、
+    // 実寸で下の予約を上書きする → カードもツール行も必ずシートより上に収まる
+    const sheetR=document.querySelector('.panel').getBoundingClientRect();
+    if(sheetR.height>0){
+      const need=Math.round(window.innerHeight-sheetR.top+10);
+      if(need>pb){ stageEl.style.paddingBottom=need+'px'; pb=need; }
+      else if(stageEl.style.paddingBottom){ stageEl.style.paddingBottom=''; pb=parseFloat(getComputedStyle(stageEl).paddingBottom)||0; }
+    }
     let pt=parseFloat(cs.paddingTop)||0;
     if(getComputedStyle(chip).display!=='none') pt=Math.max(pt, chip.offsetTop+chip.offsetHeight+2);   // 角度チップ分も確保
     const base=stageEl.clientHeight-pb-pt-14;   // ツール行を除いて確保できる高さ
@@ -763,7 +772,6 @@ function fitCard(){
     if(tls&&avail<150){                          // 狭い → コンパクト(小さいボタン2行)に切替
       tls.classList.add('compact');
       avail=base-(tls.offsetHeight+(parseFloat(getComputedStyle(tls).marginTop)||0));
-      if(avail<110){ tls.style.display='none'; avail=base; }   // さらに狭い → カード優先で隠す
     }
     availH=Math.max(80,avail);   // タイトル・角度表示帯・ツール行・シートを除いた実測の見える範囲だけを使う
   }
@@ -931,7 +939,7 @@ function enterClean(){
   clean=true; document.body.classList.add('clean');
   requestAnimationFrame(fitCard);
   armCleanFade();
-  toast('全画面モード:カードだけを表示します(✕ か Esc で戻る)');
+  toast('全画面モード:カードだけを表示します(画面をタップ → ✕ で戻る / PCはEsc)',4800);
 }
 function exitClean(){
   if(!clean) return;
@@ -1186,14 +1194,40 @@ function setSheet(collapsed){
   document.body.classList.toggle('sheet-collapsed',collapsed);
   sheetToggle.textContent=collapsed?'⚙ 設定をひらく':'✕';
   requestAnimationFrame(fitCard);
+  setTimeout(()=>requestAnimationFrame(fitCard),360);   // 開閉アニメ後に最終寸法で再調整
 }
 sheetToggle.addEventListener('click',()=>setSheet(!document.body.classList.contains('sheet-collapsed')));
+document.querySelector('.panel').addEventListener('transitionend',e=>{ if(e.propertyName==='max-height') requestAnimationFrame(fitCard); });   // 開閉アニメ完了後の実寸で再調整
 tabBtns.forEach(b=>b.addEventListener('click',()=>{
   showTab(b.dataset.tab);
   if(document.body.classList.contains('sheet-collapsed')) setSheet(false);
 }));
 showTab('images');
 if(window.matchMedia('(max-width:900px)').matches) setSheet(true);  // 初見はカードを主役に
+
+/* ---------- デバッグ表示(URLの末尾に ?debug を付けると有効) ---------- */
+if(/[?&]debug/.test(location.search)){
+  const box=document.createElement('div');
+  box.id='dbgBox';
+  box.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,.88);color:#8fe8ff;font:11px/1.45 ui-monospace,monospace;padding:6px 8px;pointer-events:none;white-space:pre-wrap';
+  document.body.appendChild(box);
+  const R=e=>{const r=e.getBoundingClientRect();return Math.round(r.width)+'x'+Math.round(r.height)+' @'+Math.round(r.left)+','+Math.round(r.top);};
+  const upd=()=>{
+    const tls=document.querySelector('.stage-tools');
+    box.textContent=[
+      'UA '+navigator.userAgent.slice(0,70),
+      'win '+innerWidth+'x'+innerHeight+' dpr'+devicePixelRatio+(window.visualViewport?' vv '+Math.round(visualViewport.width)+'x'+Math.round(visualViewport.height):''),
+      'body['+(document.body.className||'-')+']',
+      'stage '+R(stageEl)+' pb '+getComputedStyle(stageEl).paddingBottom,
+      'card '+R(card),
+      'tools '+(tls?R(tls)+' d:'+getComputedStyle(tls).display:'-'),
+      'sheet '+R(document.querySelector('.panel')),
+      'header '+R(document.querySelector('header'))
+    ].join(' \n');
+  };
+  upd(); setInterval(upd,600);
+  addEventListener('resize',upd);
+}
 
 /* ---------- blend(opacity) ---------- */
 function computeOps(q){
@@ -1435,5 +1469,5 @@ fitCard(); applyDesign(); applyOverlay(); updateHoloKindState(); updateSaveStatu
 requestAnimationFrame(frame);
 if(restored) toast('前回の画像と設定を復元しました');
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5714e3c0ab3963b',t:'MTc5NDEwNjU5Nw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5714e3c0ab3963b',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
