@@ -280,6 +280,7 @@ body.theater #gyroFloat:hover,body.clean #gyroFloat:hover{background:rgba(255,25
 
 @media (max-width:900px){
   html,body{height:100%;overflow:hidden}
+  html,body{height:100dvh}   /* URLバーありの実寸(100%が最大高さに解決されるAndroid/iOS対策) */
   body{display:flex;flex-direction:column}
   header{flex:0 0 auto;padding:14px 10px 8px}
   header .sub{display:none}
@@ -739,6 +740,7 @@ function ratioWH(){
   const p=v.split('/').map(Number); return [p[0],p[1]];
 }
 function fitCard(){
+  pinViewportHeight();
   const th=theater||clean;
   const mob=window.matchMedia('(max-width:900px)').matches;
   const availW=Math.min(sceneEl.clientWidth||window.innerWidth-64, th?980:620);
@@ -785,6 +787,11 @@ function fitCard(){
   applyGeometry();
 }
 ratioSel.addEventListener('change',()=>{ fitCard(); ratioHint(); });
+function pinViewportHeight(){
+  // URLバーありの実寸に html の高さを固定(dvh非対応ブラウザ向け保険。100%は最大高さに解決される為)
+  const mob=window.matchMedia('(max-width:900px)').matches;
+  document.documentElement.style.height=(mob&&!theater&&!clean)?window.innerHeight+'px':'';
+}
 window.addEventListener('resize',fitCard);
 function ratioHint(){
   if(ratioHintShown||frames.length<2||!frames[0]) return;
@@ -1469,5 +1476,5 @@ fitCard(); applyDesign(); applyOverlay(); updateHoloKindState(); updateSaveStatu
 requestAnimationFrame(frame);
 if(restored) toast('前回の画像と設定を復元しました');
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a571cde76e2f96da',t:'MTc5NDExMTgyNw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a571cde76e2f96da',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
